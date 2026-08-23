@@ -6,7 +6,12 @@ import { desc } from "drizzle-orm";
 
 
 
+import { getSession } from "@/lib/auth";
+
 export default async function DashboardPage() {
+  const session = await getSession();
+  const role = session?.user?.role || 'Staff';
+
   const db = getDb();
 
   // 1. Fetch Penjualan
@@ -52,44 +57,48 @@ export default async function DashboardPage() {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Penghasilan */}
-        <div className="bg-surface p-5 rounded-lg border border-border shadow-sm">
-          <div className="flex justify-between items-start">
-            <h3 className="text-sm font-semibold text-text-secondary">Total Pemasukan</h3>
-            <div className="p-2 bg-success-light text-success rounded-md">
-              <ArrowUpRight size={16} />
+        {role === 'Admin' && (
+          <>
+            {/* Penghasilan */}
+            <div className="bg-surface p-5 rounded-lg border border-border shadow-sm">
+              <div className="flex justify-between items-start">
+                <h3 className="text-sm font-semibold text-text-secondary">Total Pemasukan</h3>
+                <div className="p-2 bg-success-light text-success rounded-md">
+                  <ArrowUpRight size={16} />
+                </div>
+              </div>
+              <div className="mt-4">
+                <p className="text-2xl font-bold text-text-primary">{formatRupiah(summary.penghasilan)}</p>
+              </div>
             </div>
-          </div>
-          <div className="mt-4">
-            <p className="text-2xl font-bold text-text-primary">{formatRupiah(summary.penghasilan)}</p>
-          </div>
-        </div>
 
-        {/* Pengeluaran */}
-        <div className="bg-surface p-5 rounded-lg border border-border shadow-sm">
-          <div className="flex justify-between items-start">
-            <h3 className="text-sm font-semibold text-text-secondary">Total Pengeluaran</h3>
-            <div className="p-2 bg-danger-light text-danger rounded-md">
-              <ArrowDownRight size={16} />
+            {/* Pengeluaran */}
+            <div className="bg-surface p-5 rounded-lg border border-border shadow-sm">
+              <div className="flex justify-between items-start">
+                <h3 className="text-sm font-semibold text-text-secondary">Total Pengeluaran</h3>
+                <div className="p-2 bg-danger-light text-danger rounded-md">
+                  <ArrowDownRight size={16} />
+                </div>
+              </div>
+              <div className="mt-4">
+                <p className="text-2xl font-bold text-text-primary">{formatRupiah(summary.pengeluaran)}</p>
+              </div>
             </div>
-          </div>
-          <div className="mt-4">
-            <p className="text-2xl font-bold text-text-primary">{formatRupiah(summary.pengeluaran)}</p>
-          </div>
-        </div>
 
-        {/* Selisih */}
-        <div className="bg-surface p-5 rounded-lg border border-border shadow-sm">
-          <div className="flex justify-between items-start">
-            <h3 className="text-sm font-semibold text-text-secondary">Keuntungan Bersih</h3>
-            <div className="p-2 bg-primary-light text-primary rounded-md">
-              <Wallet size={16} />
+            {/* Selisih */}
+            <div className="bg-surface p-5 rounded-lg border border-border shadow-sm">
+              <div className="flex justify-between items-start">
+                <h3 className="text-sm font-semibold text-text-secondary">Keuntungan Bersih</h3>
+                <div className="p-2 bg-primary-light text-primary rounded-md">
+                  <Wallet size={16} />
+                </div>
+              </div>
+              <div className="mt-4">
+                <p className="text-2xl font-bold text-text-primary">{formatRupiah(summary.selisih)}</p>
+              </div>
             </div>
-          </div>
-          <div className="mt-4">
-            <p className="text-2xl font-bold text-text-primary">{formatRupiah(summary.selisih)}</p>
-          </div>
-        </div>
+          </>
+        )}
 
         {/* Total Transaksi */}
         <div className="bg-surface p-5 rounded-lg border border-border shadow-sm">
