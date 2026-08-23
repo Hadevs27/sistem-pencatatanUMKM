@@ -1,13 +1,11 @@
-import { drizzle } from "drizzle-orm/d1";
+import { neon } from '@neondatabase/serverless';
+import { drizzle } from 'drizzle-orm/neon-http';
 import * as schema from "../db/schema";
-import { getRequestContext } from "@cloudflare/next-on-pages";
+
+const databaseUrl = process.env.DATABASE_URL || "postgresql://dummy_user:dummy_pass@ep-dummy-db.neon.tech/neondb";
+const sql = neon(databaseUrl);
+export const db = drizzle({ client: sql, schema });
 
 export function getDb() {
-  const env = getRequestContext().env as any;
-  
-  if (!env.DB) {
-    throw new Error("Cloudflare D1 DB binding 'DB' is missing. Pastikan aplikasi dijalankan via Cloudflare Pages atau wrangler pages dev.");
-  }
-  
-  return drizzle(env.DB, { schema });
+  return db;
 }

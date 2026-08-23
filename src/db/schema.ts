@@ -1,28 +1,17 @@
-import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
+import { pgTable, text, integer } from 'drizzle-orm/pg-core';
 
-export const users = sqliteTable('users', {
-  id: text('id').primaryKey(), // We can use UUID strings
+export const users = pgTable('users', {
+  id: text('id').primaryKey(),
   username: text('username').notNull().unique(),
   passwordHash: text('password_hash').notNull(),
   plainPassword: text('plain_password'),
   nama: text('nama').notNull(),
-  role: text('role').notNull(), // Admin / Karyawan
+  role: text('role').notNull(), // Admin / Staff
   status: text('status').notNull(), // Aktif / Nonaktif
   createdAt: text('created_at').notNull(),
 });
 
-export const barang = sqliteTable('barang', {
-  idBarang: text('id_barang').primaryKey(),
-  kodeBarang: text('kode_barang').notNull().unique(),
-  namaBarang: text('nama_barang').notNull(),
-  satuan: text('satuan').notNull(),
-  hargaBeli: integer('harga_beli').notNull(),
-  hargaJual: integer('harga_jual').notNull(),
-  stok: integer('stok').notNull().default(0),
-  status: text('status').notNull(), // Aktif / Nonaktif
-});
-
-export const barangMasuk = sqliteTable('barang_masuk', {
+export const barangMasuk = pgTable('barang_masuk', {
   idTransaksi: text('id_transaksi').primaryKey(),
   nomorTransaksi: text('nomor_transaksi').notNull().unique(),
   tanggal: text('tanggal').notNull(),
@@ -36,7 +25,7 @@ export const barangMasuk = sqliteTable('barang_masuk', {
   userId: text('user_id').notNull(),
 });
 
-export const barangKeluar = sqliteTable('barang_keluar', {
+export const barangKeluar = pgTable('barang_keluar', {
   idTransaksi: text('id_transaksi').primaryKey(),
   nomorTransaksi: text('nomor_transaksi').notNull().unique(),
   tanggal: text('tanggal').notNull(),
@@ -50,29 +39,29 @@ export const barangKeluar = sqliteTable('barang_keluar', {
   userId: text('user_id').notNull(),
 });
 
-export const penghasilan = sqliteTable('penghasilan', {
+export const penghasilan = pgTable('penghasilan', {
   idTransaksi: text('id_transaksi').primaryKey(),
   nomorTransaksi: text('nomor_transaksi').notNull().unique(),
   tanggal: text('tanggal').notNull(),
   sumber: text('sumber').notNull(),
   nominal: integer('nominal').notNull(),
-  metode: text('metode').notNull(), // Cash / QRIS
+  metode: text('metode').notNull(),
   keterangan: text('keterangan'),
   userId: text('user_id').notNull(),
 });
 
-export const pengeluaran = sqliteTable('pengeluaran', {
+export const pengeluaran = pgTable('pengeluaran', {
   idTransaksi: text('id_transaksi').primaryKey(),
   nomorTransaksi: text('nomor_transaksi').notNull().unique(),
   tanggal: text('tanggal').notNull(),
   kategori: text('kategori').notNull(),
   nominal: integer('nominal').notNull(),
-  metode: text('metode').notNull(), // Cash / QRIS
+  metode: text('metode').notNull(),
   keterangan: text('keterangan'),
   userId: text('user_id').notNull(),
 });
 
-export const penjualan = sqliteTable('penjualan', {
+export const penjualan = pgTable('penjualan', {
   idTransaksi: text('id_transaksi').primaryKey(),
   metode: text('metode').notNull().default('Cash'),
   tanggal: text('tanggal').notNull(),
@@ -82,7 +71,7 @@ export const penjualan = sqliteTable('penjualan', {
   userId: text('user_id').notNull(),
 });
 
-export const bahanBaku = sqliteTable('bahan_baku', {
+export const bahanBaku = pgTable('bahan_baku', {
   id: text('id').primaryKey(),
   namaBahan: text('nama_bahan').notNull(),
   kuantiti: text('kuantiti').notNull(),

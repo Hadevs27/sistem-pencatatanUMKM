@@ -1,9 +1,0 @@
-name = "sistem-pencatatan"
-compatibility_date = "2024-03-20"
-compatibility_flags = ["nodejs_compat"]
-pages_build_output_dir = ".vercel/output/static"
-
-[[d1_databases]]
-binding = "DB"
-database_name = "sistem-pencatatan-db"
-database_id = "61f9eb51-d5b8-479a-86df-e3f342d7daa6"

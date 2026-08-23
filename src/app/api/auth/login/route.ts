@@ -6,7 +6,7 @@ import { compare } from "bcrypt-ts";
 import { login } from "@/lib/auth";
 
 // Opt into the Edge runtime since we need Cloudflare bindings
-export const runtime = 'edge';
+
 
 export async function POST(request: Request) {
   try {

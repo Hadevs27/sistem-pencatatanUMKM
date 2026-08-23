@@ -4,7 +4,7 @@ import { getDb } from "@/lib/db";
 import { penjualan, penghasilan, pengeluaran } from "@/db/schema";
 import { desc } from "drizzle-orm";
 
-export const runtime = 'edge';
+
 
 export default async function DashboardPage() {
   const db = getDb();

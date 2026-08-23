@@ -5,7 +5,7 @@ import { eq, ne } from "drizzle-orm";
 import { hash } from "bcrypt-ts";
 import { decrypt } from "@/lib/auth";
 
-export const runtime = 'edge';
+
 
 export async function GET() {
   try {

@@ -4,7 +4,7 @@ import { penjualan } from "@/db/schema";
 import { desc, eq, and } from "drizzle-orm";
 import { decrypt } from "@/lib/auth";
 
-export const runtime = 'edge';
+
 
 export async function GET(request: Request) {
   try {
