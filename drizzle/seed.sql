@@ -1,0 +1,1 @@
+INSERT INTO users (id, username, password_hash, nama, role, status, created_at) VALUES ('1', 'admin', '$2a$10$Y3wGzJ2v8FwXz4y1mQZ3.OQ2s2c6u2b/4y1mQZ3.OQ2s2c6u2b/4y', 'Administrator', 'Admin', 'Aktif', '2026-08-23T00:00:00Z');

@@ -1,0 +1,1 @@
+﻿ALTER TABLE penjualan ADD COLUMN metode TEXT NOT NULL DEFAULT 'Cash';
