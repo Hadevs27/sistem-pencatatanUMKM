@@ -22,7 +22,7 @@ export default function BarangMasukPage() {
     tanggal: new Date().toISOString().split('T')[0],
     namaBarang: "",
     jumlah: "",
-    hargaBeli: "",
+    
     keterangan: "",
   });
 
@@ -50,7 +50,6 @@ export default function BarangMasukPage() {
       tanggal: item.tanggal,
       namaBarang: item.namaBarang,
       jumlah: item.jumlah.toString(),
-      hargaBeli: item.hargaBeli.toString(),
       keterangan: item.keterangan || "",
     });
     setIsEditing(true);
@@ -92,7 +91,7 @@ export default function BarangMasukPage() {
         tanggal: new Date().toISOString().split('T')[0],
         namaBarang: "",
         jumlah: "",
-        hargaBeli: "",
+        
         keterangan: "",
       });
       fetchData();
@@ -114,8 +113,8 @@ export default function BarangMasukPage() {
       "Nama Barang": item.namaBarang,
       "Tanggal": item.tanggal,
       "Kuantiti": item.jumlah,
-      "Harga Beli": item.hargaBeli,
-      "Total": item.jumlah * item.hargaBeli,
+      
+      
       "Keterangan": item.keterangan || "-"
     }));
     const worksheet = XLSX.utils.json_to_sheet(exportData);
@@ -129,14 +128,14 @@ export default function BarangMasukPage() {
     doc.text("Laporan Barang Masuk", 14, 15);
     autoTable(doc, {
       startY: 20,
-      head: [["No", "Nama Barang", "Tanggal", "Kuantiti", "Harga Beli", "Total", "Keterangan"]],
+      head: [["No", "Nama Barang", "Tanggal", "Kuantiti",  "Keterangan"]],
       body: filteredData.map((item, idx) => [
         idx + 1,
         item.namaBarang,
         item.tanggal,
         item.jumlah,
-        formatRupiah(item.hargaBeli),
-        formatRupiah(item.jumlah * item.hargaBeli),
+        
+        
         item.keterangan || "-"
       ]),
     });
@@ -162,7 +161,7 @@ export default function BarangMasukPage() {
               tanggal: new Date().toISOString().split('T')[0],
               namaBarang: "",
               jumlah: "",
-              hargaBeli: "",
+              
               keterangan: "",
             });
             setIsAdding(true);
@@ -241,8 +240,8 @@ export default function BarangMasukPage() {
                     <th className="px-6 py-3">Nama Barang</th>
                     <th className="px-6 py-3">Tanggal</th>
                     <th className="px-6 py-3">Kuantiti</th>
-                    <th className="px-6 py-3">Harga Beli</th>
-                    <th className="px-6 py-3">Total</th>
+                    
+                    
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
@@ -252,8 +251,8 @@ export default function BarangMasukPage() {
                       <td className="px-6 py-3 font-medium">{item.namaBarang}</td>
                       <td className="px-6 py-3">{item.tanggal}</td>
                       <td className="px-6 py-3">{item.jumlah}</td>
-                      <td className="px-6 py-3">{formatRupiah(item.hargaBeli)}</td>
-                      <td className="px-6 py-3">{formatRupiah(item.jumlah * item.hargaBeli)}</td>
+                      
+                      
                     </tr>
                   ))}
                   {filteredData.length === 0 && (
@@ -296,17 +295,10 @@ export default function BarangMasukPage() {
                   <input required type="text" className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                     value={formData.namaBarang} onChange={e => setFormData({...formData, namaBarang: e.target.value})} placeholder="Contoh: Indomie" />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-text-primary mb-1">Harga Beli</label>
-                    <input required type="number" className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-                      value={formData.hargaBeli} onChange={e => setFormData({...formData, hargaBeli: e.target.value})} />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-text-primary mb-1">Kuantiti</label>
-                    <input required type="number" min="1" className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-                      value={formData.jumlah} onChange={e => setFormData({...formData, jumlah: e.target.value})} />
-                  </div>
+                <div>
+                  <label className="block text-sm font-medium text-text-primary mb-1">Kuantiti</label>
+                  <input required type="number" min="1" className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                    value={formData.jumlah} onChange={e => setFormData({...formData, jumlah: e.target.value})} />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-text-primary mb-1">Keterangan (Opsional)</label>

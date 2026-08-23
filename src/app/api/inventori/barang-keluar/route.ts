@@ -26,15 +26,14 @@ export async function POST(request: Request) {
     }
 
     const body = (await request.json()) as any;
-    const { tanggal, namaBarang, jumlah, hargaJual, tujuan, keterangan } = body;
+    const { tanggal, namaBarang, jumlah, tujuan, keterangan } = body;
 
-    if (!tanggal || !namaBarang || !jumlah || !hargaJual) {
+    if (!tanggal || !namaBarang || !jumlah) {
       return NextResponse.json({ error: "Semua field wajib diisi" }, { status: 400 });
     }
 
     const db = getDb();
     const nomorTransaksi = `BK-${Date.now()}`;
-    const total = Number(jumlah) * Number(hargaJual);
 
     const newBarangKeluar = {
       idTransaksi: crypto.randomUUID(),
@@ -43,8 +42,6 @@ export async function POST(request: Request) {
       kodeBarang: `BRG-${Date.now()}`,
       namaBarang,
       jumlah: Number(jumlah),
-      hargaJual: Number(hargaJual),
-      total,
       tujuan: tujuan || null,
       keterangan: keterangan || null,
       userId,
@@ -77,21 +74,18 @@ export async function DELETE(request: Request) {
 export async function PUT(request: Request) {
   try {
     const body = (await request.json()) as any;
-    const { idTransaksi, tanggal, namaBarang, jumlah, hargaJual, tujuan, keterangan } = body;
+    const { idTransaksi, tanggal, namaBarang, jumlah, tujuan, keterangan } = body;
 
-    if (!idTransaksi || !tanggal || !namaBarang || !jumlah || !hargaJual) {
+    if (!idTransaksi || !tanggal || !namaBarang || !jumlah) {
       return NextResponse.json({ error: "Semua field wajib diisi" }, { status: 400 });
     }
 
     const db = getDb();
-    const total = Number(jumlah) * Number(hargaJual);
 
     await db.update(barangKeluar).set({
       tanggal,
       namaBarang,
       jumlah: Number(jumlah),
-      hargaJual: Number(hargaJual),
-      total,
       tujuan: tujuan || null,
       keterangan: keterangan || null,
     }).where(eq(barangKeluar.idTransaksi, idTransaksi));
