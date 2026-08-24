@@ -75,7 +75,7 @@ export default function Sidebar({ user, onNavigate }: { user?: any; onNavigate?:
     <>
       {/* Logo & Close Button (Mobile Only) */}
       <div className="h-16 flex items-center justify-between px-6 border-b border-border flex-shrink-0">
-        <span className="text-xl font-bold text-primary">NAMA UMKM</span>
+        <span className="text-xl font-bold text-primary">Toko Piloe Chickroll</span>
         {onNavigate && (
           <button 
             className="md:hidden text-text-muted hover:text-text-primary focus:outline-none p-1"
