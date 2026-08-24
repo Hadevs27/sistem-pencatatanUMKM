@@ -119,6 +119,7 @@ export default function PenjualanPage({ params }: { params: Promise<{ metode: st
       "No": idx + 1,
       "Nominal (Rp)": item.nominal,
       "Pcs yang laku": item.pcsLaku,
+      "Total Nominal": item.nominal * item.pcsLaku,
       "Tanggal": item.tanggal,
       "Keterangan": item.keterangan || "-"
     }));
@@ -133,11 +134,12 @@ export default function PenjualanPage({ params }: { params: Promise<{ metode: st
     doc.text(`Laporan ${title}`, 14, 15);
     autoTable(doc, {
       startY: 20,
-      head: [["No", "Nominal (Rp)", "Pcs yang laku", "Tanggal", "Keterangan"]],
+      head: [["No", "Nominal (Rp)", "Pcs yang laku", "Total Nominal", "Tanggal", "Keterangan"]],
       body: filteredData.map((item, idx) => [
         idx + 1,
         formatRupiah(item.nominal),
         item.pcsLaku,
+        formatRupiah(item.nominal * item.pcsLaku),
         item.tanggal,
         item.keterangan || "-"
       ]),
@@ -192,7 +194,7 @@ export default function PenjualanPage({ params }: { params: Promise<{ metode: st
               <tr>
                 <th className="px-6 py-4 font-medium w-16">No</th>
                 <th className="px-6 py-4 font-medium">Nominal (Rp)</th>
-                <th className="px-6 py-4 font-medium">Pcs yang laku</th>
+                <th className="px-6 py-4 font-medium">Pcs yang laku</th><th className="px-6 py-4 font-medium">Total Nominal</th>
                 <th className="px-6 py-4 font-medium">Tanggal</th>
                 <th className="px-6 py-4 font-medium">Keterangan</th>
                 <th className="px-6 py-4 font-medium text-right">Aksi</th>
@@ -205,7 +207,7 @@ export default function PenjualanPage({ params }: { params: Promise<{ metode: st
                 <tr key={item.idTransaksi || idx} className="hover:bg-gray-50 transition-colors">
                   <td className="px-6 py-4 font-medium text-text-secondary">{idx + 1}</td>
                   <td className="px-6 py-4 font-medium text-text-primary">{formatRupiah(item.nominal)}</td>
-                  <td className="px-6 py-4 text-text-secondary">{item.pcsLaku}</td>
+                  <td className="px-6 py-4 text-text-secondary">{item.pcsLaku}</td><td className="px-6 py-4 font-bold text-success">{formatRupiah(item.nominal * item.pcsLaku)}</td>
                   <td className="px-6 py-4 text-text-secondary">{item.tanggal}</td>
                   <td className="px-6 py-4 text-text-secondary">{item.keterangan || "-"}</td>
                   <td className="px-6 py-4 text-right space-x-2">
@@ -241,7 +243,7 @@ export default function PenjualanPage({ params }: { params: Promise<{ metode: st
                   <tr>
                     <th className="px-6 py-3 w-16">No</th>
                     <th className="px-6 py-3">Nominal (Rp)</th>
-                    <th className="px-6 py-3">Pcs yang laku</th>
+                    <th className="px-6 py-3">Pcs yang laku</th><th className="px-6 py-3">Total Nominal</th>
                     <th className="px-6 py-3">Tanggal</th>
                     <th className="px-6 py-3">Keterangan</th>
                   </tr>
@@ -251,7 +253,7 @@ export default function PenjualanPage({ params }: { params: Promise<{ metode: st
                     <tr key={idx}>
                       <td className="px-6 py-3">{idx + 1}</td>
                       <td className="px-6 py-3 font-medium">{formatRupiah(item.nominal)}</td>
-                      <td className="px-6 py-3">{item.pcsLaku}</td>
+                      <td className="px-6 py-3">{item.pcsLaku}</td><td className="px-6 py-3 font-bold text-success">{formatRupiah(item.nominal * item.pcsLaku)}</td>
                       <td className="px-6 py-3">{item.tanggal}</td>
                       <td className="px-6 py-3">{item.keterangan || "-"}</td>
                     </tr>

@@ -20,8 +20,9 @@ export default async function DashboardPage() {
   let qrisTotal = 0;
   
   penjualanData.forEach(p => {
-    if (p.metode === "Cash") cashTotal += p.nominal;
-    if (p.metode === "Qris") qrisTotal += p.nominal;
+    const totalRow = p.nominal * p.pcsLaku;
+    if (p.metode === "Cash") cashTotal += totalRow;
+    if (p.metode === "Qris") qrisTotal += totalRow;
   });
   const totalPenjualan = cashTotal + qrisTotal;
 
