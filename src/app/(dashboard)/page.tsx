@@ -2,7 +2,7 @@ import { ArrowUpRight, ArrowDownRight, Wallet, ShoppingCart } from "lucide-react
 import { formatRupiah } from "@/lib/utils";
 import { getDb } from "@/lib/db";
 import { penjualan, penghasilan, pengeluaran } from "@/db/schema";
-import { desc, and, gte, lte } from "drizzle-orm";
+import { desc, and, gte, lte, eq, like } from "drizzle-orm";
 import DateFilter from "@/components/DateFilter";
 
 import { getSession } from "@/lib/auth";
@@ -46,6 +46,18 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
   });
   const totalPenjualan = cashTotal + qrisTotal;
 
+  // Additional Fetch for today and this month
+  // We use current local time in Indonesian context ideally, but ISO string works fine
+  const now = new Date();
+  const todayDate = now.toLocaleDateString("en-CA"); // "YYYY-MM-DD" in local time
+  const thisMonthPrefix = todayDate.substring(0, 7);
+
+  const penjualanHariIni = await db.select().from(penjualan).where(eq(penjualan.tanggal, todayDate));
+  const penjualanBulanIni = await db.select().from(penjualan).where(like(penjualan.tanggal, `${thisMonthPrefix}%`));
+
+  const pcsHariIni = penjualanHariIni.reduce((acc, curr) => acc + curr.pcsLaku, 0);
+  const pcsBulanIni = penjualanBulanIni.reduce((acc, curr) => acc + curr.pcsLaku, 0);
+
   // 2. Fetch Penghasilan Operasional
   const penghasilanData = await db.select().from(penghasilan)
     .where(conditionsPenghasilan.length > 0 ? and(...conditionsPenghasilan) : undefined)
@@ -66,6 +78,8 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
     selisih: totalPemasukan - totalPengeluaran,
     totalTransaksi: penjualanData.length,
     totalPcsLaku: totalPcsLaku,
+    pcsHariIni: pcsHariIni,
+    pcsBulanIni: pcsBulanIni,
   };
 
   const cashPercent = totalPemasukan > 0 ? Math.round((cashTotal / totalPemasukan) * 100) : 0;
@@ -128,16 +142,27 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
         )}
 
         {/* Total Transaksi */}
-        <div className="bg-surface p-5 rounded-lg border border-border shadow-sm">
-          <div className="flex justify-between items-start">
-            <h3 className="text-sm font-semibold text-text-secondary">Transaksi Penjualan</h3>
-            <div className="p-2 bg-warning-light text-warning rounded-md">
-              <ShoppingCart size={16} />
+        <div className="bg-surface p-5 rounded-lg border border-border shadow-sm flex flex-col justify-between">
+          <div>
+            <div className="flex justify-between items-start">
+              <h3 className="text-sm font-semibold text-text-secondary">Pcs Terjual (Sesuai Filter)</h3>
+              <div className="p-2 bg-warning-light text-warning rounded-md">
+                <ShoppingCart size={16} />
+              </div>
+            </div>
+            <div className="mt-4">
+              <p className="text-3xl font-bold text-text-primary">{summary.totalPcsLaku} <span className="text-base font-normal text-text-secondary">pcs</span></p>
             </div>
           </div>
-          <div className="mt-4 flex flex-col gap-1">
-            <p className="text-2xl font-bold text-text-primary">{summary.totalTransaksi} <span className="text-base font-normal text-text-secondary">kali</span></p>
-            <p className="text-lg font-semibold text-text-secondary">{summary.totalPcsLaku} <span className="text-sm font-normal text-text-muted">pcs terjual</span></p>
+          <div className="mt-5 pt-4 border-t border-border flex justify-between text-sm">
+            <div className="flex flex-col">
+              <span className="text-text-muted">Hari ini</span>
+              <span className="font-semibold text-text-primary">{summary.pcsHariIni} pcs</span>
+            </div>
+            <div className="flex flex-col text-right">
+              <span className="text-text-muted">Bulan ini</span>
+              <span className="font-semibold text-text-primary">{summary.pcsBulanIni} pcs</span>
+            </div>
           </div>
         </div>
       </div>
