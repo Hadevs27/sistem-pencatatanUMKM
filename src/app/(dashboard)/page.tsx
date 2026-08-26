@@ -2,24 +2,44 @@ import { ArrowUpRight, ArrowDownRight, Wallet, ShoppingCart } from "lucide-react
 import { formatRupiah } from "@/lib/utils";
 import { getDb } from "@/lib/db";
 import { penjualan, penghasilan, pengeluaran } from "@/db/schema";
-import { desc } from "drizzle-orm";
-
-
+import { desc, and, gte, lte } from "drizzle-orm";
+import DateFilter from "@/components/DateFilter";
 
 import { getSession } from "@/lib/auth";
 
-export default async function DashboardPage() {
+export default async function DashboardPage({ searchParams }: { searchParams: Promise<{ start?: string; end?: string }> }) {
   const session = await getSession();
   const role = session?.user?.role || 'Staff';
 
+  const searchParamsResolved = await searchParams;
+  const start = searchParamsResolved?.start;
+  const end = searchParamsResolved?.end;
+
   const db = getDb();
 
+  const conditionsPenjualan = [];
+  if (start) conditionsPenjualan.push(gte(penjualan.tanggal, start));
+  if (end) conditionsPenjualan.push(lte(penjualan.tanggal, end));
+  
+  const conditionsPenghasilan = [];
+  if (start) conditionsPenghasilan.push(gte(penghasilan.tanggal, start));
+  if (end) conditionsPenghasilan.push(lte(penghasilan.tanggal, end));
+
+  const conditionsPengeluaran = [];
+  if (start) conditionsPengeluaran.push(gte(pengeluaran.tanggal, start));
+  if (end) conditionsPengeluaran.push(lte(pengeluaran.tanggal, end));
+
   // 1. Fetch Penjualan
-  const penjualanData = await db.select().from(penjualan).orderBy(desc(penjualan.tanggal));
+  const penjualanData = await db.select().from(penjualan)
+    .where(conditionsPenjualan.length > 0 ? and(...conditionsPenjualan) : undefined)
+    .orderBy(desc(penjualan.tanggal));
+    
   let cashTotal = 0;
   let qrisTotal = 0;
+  let totalPcsLaku = 0;
   
   penjualanData.forEach(p => {
+    totalPcsLaku += p.pcsLaku;
     const totalRow = p.nominal * p.pcsLaku;
     if (p.metode === "Cash") cashTotal += totalRow;
     if (p.metode === "Qris") qrisTotal += totalRow;
@@ -27,11 +47,15 @@ export default async function DashboardPage() {
   const totalPenjualan = cashTotal + qrisTotal;
 
   // 2. Fetch Penghasilan Operasional
-  const penghasilanData = await db.select().from(penghasilan).orderBy(desc(penghasilan.tanggal));
+  const penghasilanData = await db.select().from(penghasilan)
+    .where(conditionsPenghasilan.length > 0 ? and(...conditionsPenghasilan) : undefined)
+    .orderBy(desc(penghasilan.tanggal));
   const totalPenghasilanOp = penghasilanData.reduce((acc, curr) => acc + curr.nominal, 0);
 
   // 3. Fetch Pengeluaran Operasional
-  const pengeluaranData = await db.select().from(pengeluaran).orderBy(desc(pengeluaran.tanggal));
+  const pengeluaranData = await db.select().from(pengeluaran)
+    .where(conditionsPengeluaran.length > 0 ? and(...conditionsPengeluaran) : undefined)
+    .orderBy(desc(pengeluaran.tanggal));
   const totalPengeluaran = pengeluaranData.reduce((acc, curr) => acc + curr.nominal, 0);
 
   // Totals
@@ -41,6 +65,7 @@ export default async function DashboardPage() {
     pengeluaran: totalPengeluaran,
     selisih: totalPemasukan - totalPengeluaran,
     totalTransaksi: penjualanData.length,
+    totalPcsLaku: totalPcsLaku,
   };
 
   const cashPercent = totalPemasukan > 0 ? Math.round((cashTotal / totalPemasukan) * 100) : 0;
@@ -54,6 +79,7 @@ export default async function DashboardPage() {
           <h2 className="text-2xl font-bold text-text-primary">Dashboard</h2>
           <p className="text-text-secondary mt-1">Ringkasan aktivitas dan finansial Anda.</p>
         </div>
+        <DateFilter />
       </div>
 
       {/* Summary Cards */}
@@ -109,8 +135,9 @@ export default async function DashboardPage() {
               <ShoppingCart size={16} />
             </div>
           </div>
-          <div className="mt-4 flex items-end justify-between">
+          <div className="mt-4 flex flex-col gap-1">
             <p className="text-2xl font-bold text-text-primary">{summary.totalTransaksi} <span className="text-base font-normal text-text-secondary">kali</span></p>
+            <p className="text-lg font-semibold text-text-secondary">{summary.totalPcsLaku} <span className="text-sm font-normal text-text-muted">pcs terjual</span></p>
           </div>
         </div>
       </div>
